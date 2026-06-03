@@ -43081,7 +43081,9 @@ const findMatchedProjectConfig = async ({ parsedProjectConfig, token, baseBranch
     });
     // parse 된 프로젝트 설정 중 현재 열린 pullRequest 에 baseBranchName 에 해당하는 프로젝트를 찾습니다.
     return parsedProjectConfig.find((projectConfig) => {
-        const isMatchedBranch = minimatch(baseBranchName, projectConfig.triggerBranch, {
+        // 단일 항목 브레이스 {xxx}를 xxx로 정규화
+        const normalizedTriggerBranch = projectConfig.triggerBranch.replace(/^\{([^,]+)}$/, '$1');
+        const isMatchedBranch = minimatch(baseBranchName, normalizedTriggerBranch, {
             nobrace: false,
         });
         const isMatchedFilePath = changedFileNameFromCommitHash.some((changedFileName) => {
